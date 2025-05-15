@@ -1,0 +1,63 @@
+name: Car Assembly Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    name: Build Stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build: створення артефактів
+        run: |
+          echo "Починаємо Build..."
+          mkdir -p build
+          cd build
+          touch car.txt
+          echo "Додаємо кузов..." >> car.txt
+          echo "Додаємо двигун..." >> car.txt
+          echo "Додаємо колеса..." >> car.txt
+          echo "Додаємо двері..." >> car.txt
+          echo "Додаємо фари..." >> car.txt
+          echo "Build завершено. Артефакти в $(pwd)"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: build/
+
+  test:
+    name: Test Stage
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+          path: build/
+
+      - name: Test: перевірка деталей
+        run: |
+          echo "Починаємо Test..."
+          cd build
+          for part in "кузов" "двигун" "колеса" "двері" "фари"
+          do
+            if grep -q "$part" car.txt; then
+              echo "Деталь '$part' знайдена."
+            else
+              echo "Деталь '$part' не знайдена!" >&2
+              exit 1
+            fi
+          done
+          echo "Усі деталі присутні. Test пройдено успішно."
+
