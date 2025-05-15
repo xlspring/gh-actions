@@ -49,10 +49,13 @@ jobs:
       - name: Test перевірка деталей
         run: |
           echo "Починаємо Test..."
-          cd build
+          if [ ! -f "build/car.txt" ]; then
+            echo "Error: car.txt not found in build directory" >&2
+            exit 1
+          fi
           for part in "кузов" "двигун" "колеса" "двері" "фари"
           do
-            if grep -q "$part" car.txt; then
+            if grep -q "$part" "build/car.txt"; then
               echo "Деталь '$part' знайдена."
             else
               echo "Деталь '$part' не знайдена!" >&2
