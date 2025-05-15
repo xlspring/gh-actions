@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build: створення артефактів
+      - name: Build створення артефактів
         run: |
           echo "Починаємо Build..."
           mkdir -p build
@@ -46,7 +46,7 @@ jobs:
           name: build-artifacts
           path: build/
 
-      - name: Test: перевірка деталей
+      - name: Test перевірка деталей
         run: |
           echo "Починаємо Test..."
           cd build
